@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f5f7fa;
+      margin: 0;
+      padding-top: 60px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Navbar Styling */
+    .navbar {
+      width: 100%;
+      background-color: #0070f3;
+      padding: 10px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 1000;
+    }
+
+    .navbar-left, .navbar-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .navbar-icon {
+      color: white;
+      font-size: 1.5rem;
+      margin: 0 15px;
+      cursor: pointer;
+      transition: color 0.3s ease;
+    }
+
+    .navbar-icon:hover {
+      color: #e0e0e0;
+    }
+
+    .navbar-brand {
+      color: white;
+      font-size: 1.8rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    /* Dropdown Styling */
+    .dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: white;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      z-index: 1;
+      border-radius: 8px;
+      right: 0;
+      top: 40px;
+      overflow: hidden;
+    }
+
+    .dropdown-content a {
+      color: #333;
+      padding: 12px 16px;
+      text-decoration: none;
+      display: block;
+      text-align: left;
+      transition: background-color 0.2s ease;
+    }
+
+    .dropdown-content a:hover {
+      background-color: #f1f1f1;
+    }
+
+    .dropdown.show .dropdown-content {
+      display: block;
+    }
+
+    /* Profile Container */
+    .profile-container {
+      background: white;
+      width: 350px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      margin-top: 20px;
+      overflow: hidden;
+      position: relative;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    /* Background Image Banner */
+    .background-banner {
+      width: 100%;
+      height: 140px;
+      background-color: #ccc;
+      background-position: center;
+      background-size: cover;
+      position: relative;
+    }
+
+    /* Background upload button overlay */
+    .bg-upload-label {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    .bg-upload-label:hover {
+      background: rgba(0,0,0,0.7);
+    }
+    input#backgroundUpload {
+      display: none;
+    }
+
+    /* Profile Image circle */
+    .profile-image-wrapper {
+      position: relative;
+      margin-top: -50px; /* pull up on banner */
+      width: 120px;
+      height: 120px;
+      margin-left: auto;
+      margin-right: auto;
+      border-radius: 50%;
+      border: 4px solid white;
+      background-color: #eee;
+      background-position: center;
+      background-size: cover;
+      overflow: hidden;
+    }
+
+    /* Profile upload button overlay */
+    .profile-upload-label {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      background: rgba(0,0,0,0.5);
+      color: white;
+      border-radius: 50%;
+      width: 30px;
+      height: 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 16px;
+    }
+    .profile-upload-label:hover {
+      background: rgba(0,0,0,0.7);
+    }
+    input#profileUpload {
+      display: none;
+    }
+
+    /* User Info */
+    .user-info {
+      padding: 60px 20px 30px 20px;
+      text-align: center;
+    }
+    .user-info h2 {
+      margin: 0;
+      font-size: 24px;
+      color: #333;
+      margin-bottom: 4px;
+    }
+    .user-info p {
+      margin: 0;
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    /* Editable fields */
+    .editable-field {
+      font-weight: 600;
+      color: #555;
+    }
+
+    /* Upload inputs container */
+    .upload-section {
+      margin: 10px 20px 20px 20px;
+      text-align: left;
+      font-size: 14px;
+      color: #555;
+    }
+    .upload-section label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+    .upload-section input[type="file"] {
+      width: 100%;
+    }
+
+    .message {
+      margin: 0 20px 20px 20px;
+      font-weight: 600;
+      text-align: center;
+    }
+    .message.error {
+      color: #e63946;
+    }
+    .message.success {
+      color: #2a9d8f;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.7rem;
+      background-color: #0070f3;
+      color: white;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      transition: background-color 0.3s ease;
+      margin-top: 1.5rem;
+    }
+    button:hover {
+      background-color: #005bb5;
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="navbar-left">
+      <a href="#" class="navbar-brand">My App</a>
+    </div>
+    <div class="navbar-right">
+      <i class="fas fa-home navbar-icon" title="Home"></i>
+      <i class="fas fa-bell navbar-icon" title="Notifications"></i>
+      <a href="messaging.html"><i class="fas fa-envelope navbar-icon" title="Messages"></i></a>
+      <div class="dropdown">
+        <i class="fas fa-cog navbar-icon" id="settingsIcon" title="Settings"></i>
+        <div class="dropdown-content" id="settingsDropdown">
+          <a href="profile.html">Profile</a>
+          <a href="#" id="dropdownLogout">Logout</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <div class="profile-container" role="main" aria-label="User Profile">
+
+    <div class="background-banner" id="backgroundBanner" aria-label="Background Image Banner">
+      <label for="backgroundUpload" class="bg-upload-label" title="Change Background Picture">
+        <i class="fas fa-camera"></i>
+      </label>
+      <input type="file" id="backgroundUpload" accept="image/*" aria-describedby="backgroundUploadDesc" />
+    </div>
+
+    <div class="profile-image-wrapper" id="profileImageWrapper" aria-label="Profile Picture">
+      <label for="profileUpload" class="profile-upload-label" title="Change Profile Picture">
+        <i class="fas fa-camera"></i>
+      </label>
+      <input type="file" id="profileUpload" accept="image/*" aria-describedby="profileUploadDesc" />
+    </div>
+
+    <div class="user-info" id="profileContent">
+      <h2 id="fullname">Full Name</h2>
+      <p>@<span id="username">username</span></p>
+      <p id="email">email@example.com</p>
+    </div>
+
+    <div class="message" id="message" role="alert"></div>
+  </div>
+
+<script type="module">
+  import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+  // Initialize Supabase
+  const supabaseUrl = 'https://tjmaegohzduvalgreqan.supabase.co';
+  const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRqbWFlZ29oemR1dmFsZ3JlcWFuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDgwMDc1MDUsImV4cCI6MjA2MzU4MzUwNX0.DBZBXfJg0Wudqw7o6q0GLIaZDcpyVWFFgjuXjeJj65c';
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  const fullnameEl = document.getElementById('fullname');
+  const usernameEl = document.getElementById('username');
+  const emailEl = document.getElementById('email');
+  const messageEl = document.getElementById('message');
+
+  const backgroundBanner = document.getElementById('backgroundBanner');
+  const profileImageWrapper = document.getElementById('profileImageWrapper');
+
+  const backgroundUploadInput = document.getElementById('backgroundUpload');
+  const profileUploadInput = document.getElementById('profileUpload');
+
+  // Toggle dropdown for settings
+  const settingsIcon = document.getElementById('settingsIcon');
+  const settingsDropdown = document.getElementById('settingsDropdown');
+  settingsIcon.addEventListener('click', () => {
+    settingsDropdown.parentElement.classList.toggle('show');
+  });
+  window.addEventListener('click', (event) => {
+    if (!event.target.matches('#settingsIcon') && !event.target.closest('.dropdown-content')) {
+      const dropdowns = document.getElementsByClassName('dropdown-content');
+      for (let i = 0; i < dropdowns.length; i++) {
+        const openDropdown = dropdowns[i];
+        if (openDropdown.parentElement.classList.contains('show')) {
+          openDropdown.parentElement.classList.remove('show');
+        }
+      }
+    }
+  });
+
+  // Logout functionality
+  const dropdownLogoutButton = document.getElementById('dropdownLogout');
+  dropdownLogoutButton.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      messageEl.textContent = 'Error logging out: ' + error.message;
+      messageEl.className = 'message error';
+    } else {
+      messageEl.textContent = 'Logged out successfully!';
+      messageEl.className = 'message success';
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 1500);
+    }
+  });
+
+  // Helper: Save image as base64 string to localStorage
+  function saveImageToLocalStorage(key, file) {
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      localStorage.setItem(key, e.target.result);
+      updateImageDisplay(key);
+    };
+    reader.readAsDataURL(file);
+  }
+
+  // Helper: Update image display from localStorage
+  function updateImageDisplay(key) {
+    const dataUrl = localStorage.getItem(key);
+    if (!dataUrl) return;
+
+    if (key === 'profilePic') {
+      profileImageWrapper.style.backgroundImage = `url(${dataUrl})`;
+    } else if (key === 'backgroundPic') {
+      backgroundBanner.style.backgroundImage = `url(${dataUrl})`;
+    }
+  }
+
+  // Event listeners for uploads
+  backgroundUploadInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      saveImageToLocalStorage('backgroundPic', file);
+      messageEl.textContent = 'Background picture updated.';
+      messageEl.className = 'message success';
+    } else {
+      messageEl.textContent = 'Please select a valid image file for background.';
+      messageEl.className = 'message error';
+    }
+    e.target.value = ''; // Reset input
+  });
+
+  profileUploadInput.addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      saveImageToLocalStorage('profilePic', file);
+      messageEl.textContent = 'Profile picture updated.';
+      messageEl.className = 'message success';
+    } else {
+      messageEl.textContent = 'Please select a valid image file for profile.';
+      messageEl.className = 'message error';
+    }
+    e.target.value = ''; // Reset input
+  });
+
+  // Load profile data from Supabase and update page
+  async function fetchUserProfile() {
+    messageEl.textContent = '';
+    messageEl.className = 'message';
+
+    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+
+    if (sessionError || !session) {
+      messageEl.textContent = 'You are not logged in.';
+      messageEl.classList.add('error');
+      setTimeout(() => {
+        window.location.href = 'login.html';
+      }, 2000);
+      return;
+    }
+
+    const user = session.user;
+
+    const { data, error } = await supabase
+      .from('users')
+      .select('fullname, username, email')
+      .eq('email', user.email)
+      .single();
+
+    if (error) {
+      messageEl.textContent = 'Error loading profile: ' + error.message;
+      messageEl.classList.add('error');
+      console.error('Error fetching user data:', error);
+      return;
+    }
+
+    if (data) {
+      fullnameEl.textContent = data.fullname || 'Full Name';
+      usernameEl.textContent = data.username || 'username';
+      emailEl.textContent = data.email || 'email@example.com';
+    } else {
+      messageEl.textContent = 'User profile data not found.';
+      messageEl.classList.add('error');
+    }
+  }
+
+  // Initialize page
+  document.addEventListener('DOMContentLoaded', () => {
+    fetchUserProfile();
+
+    // Load saved images from localStorage
+    updateImageDisplay('backgroundPic');
+    updateImageDisplay('profilePic');
+  });
+</script>
+
+</body>
+</html>
